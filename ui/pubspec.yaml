@@ -1,0 +1,16 @@
+name: hookshot_ui
+publish_to: none
+version: 0.0.0+1
+
+environment:
+  sdk: ^3.0.6
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  very_good_analysis: ^5.0.0+1
+
+flutter:
+  uses-material-design: true

@@ -1,0 +1,16 @@
+name: hookshot_protocol
+publish_to: none
+version: 0.0.0+1
+
+environment:
+  sdk: ^3.0.6
+
+dependencies:
+  freezed_annotation: ^2.4.1
+  json_annotation: ^4.8.1
+
+dev_dependencies:
+  build_runner: ^2.4.6
+  freezed: ^2.4.1
+  json_serializable: ^6.7.1
+  very_good_analysis: ^5.0.0+1

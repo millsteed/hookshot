@@ -1,0 +1,25 @@
+on: [push]
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    env:
+      SSH_HOST: ${{ secrets.SSH_HOST }}
+      SSH_USER: ${{ secrets.SSH_USER }}
+      SSH_KEY: ${{ secrets.SSH_KEY }}
+      DOCKER_HOST: "ssh://production"
+      DATABASE_PASS: ${{ secrets.DATABASE_PASS }}
+      HOOKSHOT_URL: ${{ secrets.HOOKSHOT_URL }}
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/key
+          chmod 600 ~/.ssh/key
+          cat >> ~/.ssh/config << EOF
+          Host production
+            HostName $SSH_HOST
+            User $SSH_USER
+            IdentityFile ~/.ssh/key
+            StrictHostKeyChecking no
+          EOF
+      - run: docker compose -f compose.yaml -f compose.production.yaml up -d

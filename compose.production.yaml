@@ -1,0 +1,14 @@
+services:
+  postgres:
+    ports: !reset []
+    environment:
+      POSTGRES_PASSWORD: ${DATABASE_PASS:?}
+  server:
+    build:
+      context: .
+      args:
+        DATABASE_PASS: ${DATABASE_PASS:?}
+        HOOKSHOT_API_URL: '${HOOKSHOT_URL:?}/api'
+        HOOKSHOT_STORAGE_URL: '${HOOKSHOT_URL:?}/storage'
+        WIREDASH_API_URL: '${HOOKSHOT_URL:?}/api/sdk'
+    ports: !reset []

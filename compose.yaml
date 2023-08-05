@@ -1,0 +1,21 @@
+include: [compose.dependencies.yaml]
+services:
+  server:
+    build:
+      context: .
+      args:
+        DATABASE_HOST: postgres
+        DATABASE_PORT: 5432
+        DATABASE_USER: postgres
+        DATABASE_PASS: postgres
+        DATABASE_NAME: postgres
+        STORAGE_PATH: storage
+        WEB_PATH: web
+        HOOKSHOT_API_URL: 'http://localhost:8080/api'
+        HOOKSHOT_STORAGE_URL: 'http://localhost:8080/storage'
+        WIREDASH_API_URL: 'http://localhost:8080/api/sdk'
+        WIREDASH_PROJECT: WIREDASH_PROJECT
+        WIREDASH_SECRET: WIREDASH_SECRET
+    restart: unless-stopped
+    ports: [8080:8080]
+    volumes: [./storage:/storage]
