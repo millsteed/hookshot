@@ -23,6 +23,7 @@ class FeedbackRepository {
     final attachments = Map.fromEntries(
       results
           .map((e) => e['attachments']!)
+          .where((e) => e['id'] != null && e['name'] != null)
           .map((e) => MapEntry(e['id'] as String, e['name'] as String)),
     );
     final feedback = Map.fromEntries(

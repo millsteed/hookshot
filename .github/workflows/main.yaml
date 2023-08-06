@@ -22,4 +22,4 @@ jobs:
             IdentityFile ~/.ssh/key
             StrictHostKeyChecking no
           EOF
-      - run: docker compose -f compose.yaml -f compose.production.yaml up -d
+      - run: docker compose -f compose.yaml -f compose.production.yaml up --build -d
