@@ -18,7 +18,7 @@ class MultipartFile {
   final Uint8List data;
 }
 
-extension RequestToMultipart on Request {
+extension RequestToMultipartForm on Request {
   Future<MultipartForm> toMultipartForm() async {
     final fields = <String, String>{};
     final files = <MultipartFile>[];

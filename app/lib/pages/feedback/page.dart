@@ -46,6 +46,7 @@ class FeedbackView extends StatelessWidget {
 
   Widget _buildSuccess(BuildContext context, FeedbackSuccess state) {
     final feedback = state.feedback;
+    final attachmentUrls = state.attachmentUrls;
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 1024),
@@ -53,7 +54,7 @@ class FeedbackView extends StatelessWidget {
           itemBuilder: (context, index) => _buildFeedback(
             context,
             feedback[index],
-            state.attachmentUrls,
+            attachmentUrls,
           ),
           separatorBuilder: (context, index) => Container(
             height: 1,
@@ -122,11 +123,7 @@ class FeedbackView extends StatelessWidget {
           children: [
             for (final attachment in attachments) ...[
               const SizedBox(width: Spacing.medium),
-              _buildAttachment(
-                context,
-                attachment,
-                attachmentUrls[attachment]!,
-              ),
+              _buildAttachment(context, attachmentUrls[attachment]!),
             ],
           ],
         ),
@@ -134,11 +131,7 @@ class FeedbackView extends StatelessWidget {
     );
   }
 
-  Widget _buildAttachment(
-    BuildContext context,
-    Attachment attachment,
-    String url,
-  ) {
+  Widget _buildAttachment(BuildContext context, String url) {
     return GestureDetector(
       onTap: () => launchUrlString(url),
       child: HoverableBuilder(

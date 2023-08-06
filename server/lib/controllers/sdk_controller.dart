@@ -65,10 +65,9 @@ class SdkController {
     }
     print(headers);
     final body = await request.readAsString();
-    final json = body.toJson();
     final SdkFeedback feedback;
     try {
-      feedback = SdkFeedback.fromJson(json);
+      feedback = SdkFeedback.fromJson(body.toJson());
     } on Exception {
       return Response.badRequest();
     }
@@ -86,10 +85,9 @@ class SdkController {
     }
     print(headers);
     final body = await request.readAsString();
-    final json = body.toJson();
     final SdkPromoterScore promoterScore;
     try {
-      promoterScore = SdkPromoterScore.fromJson(json);
+      promoterScore = SdkPromoterScore.fromJson(body.toJson());
     } on Exception {
       return Response.badRequest();
     }
