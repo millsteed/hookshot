@@ -10,16 +10,20 @@ class PromoterScoreSuccess extends PromoterScoreState {
   PromoterScoreSuccess(
     this.promoterScores,
     this.currentScore,
+    this.total,
     this.promoters,
     this.passives,
     this.detractors,
+    this.rollingScores,
   );
 
   final List<PromoterScore> promoterScores;
   final int currentScore;
+  final int total;
   final int promoters;
   final int passives;
   final int detractors;
+  final List<int> rollingScores;
 }
 
 class PromoterScoreFailure extends PromoterScoreState {

@@ -48,67 +48,123 @@ class PromoterScoreView extends StatelessWidget {
   Widget _buildSuccess(BuildContext context, PromoterScoreSuccess state) {
     final promoterScores = state.promoterScores;
     final currentScore = state.currentScore;
+    final total = state.total;
     final promoters = state.promoters;
     final passives = state.passives;
     final detractors = state.detractors;
-    return Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 1024),
-        child: Column(
-          children: [
-            _buildSummary(
-              context,
-              currentScore,
-              promoters,
-              passives,
-              detractors,
-            ),
-            Container(height: 1, color: Colors.gray50),
-            Expanded(
-              child: ListView.separated(
-                itemBuilder: (context, index) => _buildPromoterScore(
-                  context,
-                  promoterScores[index],
-                ),
-                separatorBuilder: (context, index) => Container(
-                  height: 1,
-                  color: Colors.gray50,
-                ),
-                itemCount: promoterScores.length,
-              ),
-            ),
-          ],
+    final rollingScores = state.rollingScores;
+    return Column(
+      children: [
+        _buildSummary(
+          context,
+          currentScore,
+          total,
+          promoters,
+          passives,
+          detractors,
+          rollingScores,
         ),
-      ),
+        Container(height: 1, color: Colors.gray50),
+        Expanded(
+          child: ListView.separated(
+            itemBuilder: (context, index) => _buildPromoterScore(
+              context,
+              promoterScores[index],
+            ),
+            separatorBuilder: (context, index) => Container(
+              height: 1,
+              color: Colors.gray50,
+            ),
+            itemCount: promoterScores.length,
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildSummary(
     BuildContext context,
     int currentScore,
+    int total,
     int promoters,
     int passives,
     int detractors,
+    List<int> rollingScores,
   ) {
-    return Padding(
-      padding: const EdgeInsets.all(Spacing.medium),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(Radius.medium),
-          color: Colors.gray50,
-        ),
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 1024),
+      child: Padding(
         padding: const EdgeInsets.all(Spacing.medium),
-        child: IntrinsicHeight(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _buildScore(context, currentScore),
-              Container(width: 1, color: Colors.gray200),
-              _buildCount(context, 'Promoters', promoters),
-              _buildCount(context, 'Passives', passives),
-              _buildCount(context, 'Destractors', detractors),
-            ],
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(Radius.medium),
+            color: Colors.gray50,
+          ),
+          padding: const EdgeInsets.all(Spacing.medium),
+          child: IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _buildScore(context, currentScore),
+                const SizedBox(width: Spacing.medium),
+                Container(width: 1, color: Colors.gray200),
+                const SizedBox(width: Spacing.medium),
+                Row(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildCount(context, 'Total', total),
+                        const SizedBox(height: Spacing.medium),
+                        _buildCount(context, 'Passives', passives),
+                      ],
+                    ),
+                    const SizedBox(width: Spacing.medium),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildCount(context, 'Promoters', promoters),
+                        const SizedBox(height: Spacing.medium),
+                        _buildCount(context, 'Detractors', detractors),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(width: Spacing.medium),
+                Container(width: 1, color: Colors.gray200),
+                const SizedBox(width: Spacing.medium),
+                Expanded(
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Row(
+                        children: [
+                          for (final score in rollingScores) ...[
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  if (score != 200) ...[
+                                    Spacer(flex: 200 - score),
+                                  ],
+                                  Expanded(
+                                    flex: score,
+                                    child: Container(color: Colors.gray100),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                      Container(
+                        height: 1,
+                        color: Colors.gray200,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -119,14 +175,14 @@ class PromoterScoreView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Current score'),
+        const Text(
+          'Current score',
+          style: TextStyle(fontSize: FontSize.large),
+        ),
         const SizedBox(height: 2),
         Text(
           '$score',
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: FontSize.extraLarge,
-          ),
+          style: const TextStyle(fontSize: 64),
         ),
       ],
     );
@@ -161,22 +217,27 @@ class PromoterScoreView extends StatelessWidget {
     final question = promoterScore.question;
     final message = promoterScore.message;
     final score = promoterScore.score;
-    return Padding(
-      padding: const EdgeInsets.all(Spacing.medium),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 1024),
+        child: Padding(
+          padding: const EdgeInsets.all(Spacing.medium),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: _buildQuestionAndMessage(context, question, message),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: _buildQuestionAndMessage(context, question, message),
+                  ),
+                  const SizedBox(width: Spacing.medium),
+                  _buildEmailAndScore(context, email, score),
+                ],
               ),
-              const SizedBox(width: Spacing.medium),
-              _buildEmailAndScore(context, email, score),
             ],
           ),
-        ],
+        ),
       ),
     );
   }

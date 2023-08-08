@@ -42,14 +42,18 @@ class PromoterScoreBloc extends Bloc<PromoterScoreEvent, PromoterScoreState> {
             .map((promoterScores) => promoterScores.score)
             .where(_detractors.contains)
             .length;
-        final currentScore = ((promoters - detractors) / total * 100).toInt();
+        final currentScore =
+            total == 0 ? 0 : ((promoters - detractors) / total * 100).toInt();
+        final rollingScores = _calculateRollingScores(promoterScores);
         emit(
           PromoterScoreSuccess(
             promoterScores,
             currentScore,
+            total,
             promoters,
             passives,
             detractors,
+            rollingScores,
           ),
         );
       } else {
@@ -60,5 +64,26 @@ class PromoterScoreBloc extends Bloc<PromoterScoreEvent, PromoterScoreState> {
     } on Exception {
       emit(PromoterScoreFailure('Something unexpected happened.'));
     }
+  }
+
+  List<int> _calculateRollingScores(List<PromoterScore> promoterScores) {
+    final rollingScores = <int>[];
+    var total = 0;
+    var promoters = 0;
+    var detractors = 0;
+    for (final promoterScore in promoterScores.reversed) {
+      final score = promoterScore.score;
+      if (score == null) {
+        continue;
+      }
+      total++;
+      if (_promoters.contains(score)) {
+        promoters++;
+      } else if (_detractors.contains(score)) {
+        detractors++;
+      }
+      rollingScores.add(((promoters - detractors) / total * 100 + 100).toInt());
+    }
+    return rollingScores;
   }
 }

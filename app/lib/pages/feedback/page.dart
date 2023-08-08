@@ -47,22 +47,17 @@ class FeedbackView extends StatelessWidget {
   Widget _buildSuccess(BuildContext context, FeedbackSuccess state) {
     final feedback = state.feedback;
     final attachmentUrls = state.attachmentUrls;
-    return Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 1024),
-        child: ListView.separated(
-          itemBuilder: (context, index) => _buildFeedback(
-            context,
-            feedback[index],
-            attachmentUrls,
-          ),
-          separatorBuilder: (context, index) => Container(
-            height: 1,
-            color: Colors.gray50,
-          ),
-          itemCount: feedback.length,
-        ),
+    return ListView.separated(
+      itemBuilder: (context, index) => _buildFeedback(
+        context,
+        feedback[index],
+        attachmentUrls,
       ),
+      separatorBuilder: (context, index) => Container(
+        height: 1,
+        color: Colors.gray50,
+      ),
+      itemCount: feedback.length,
     );
   }
 
@@ -74,17 +69,22 @@ class FeedbackView extends StatelessWidget {
     final email = feedback.email;
     final message = feedback.message;
     final attachments = feedback.attachments;
-    return IntrinsicHeight(
-      child: Padding(
-        padding: const EdgeInsets.all(Spacing.medium),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(child: _buildEmailAndMessage(context, email, message)),
-            if (attachments != null) ...[
-              _buildAttachments(context, attachments, attachmentUrls),
-            ],
-          ],
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 1024),
+        child: IntrinsicHeight(
+          child: Padding(
+            padding: const EdgeInsets.all(Spacing.medium),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(child: _buildEmailAndMessage(context, email, message)),
+                if (attachments != null) ...[
+                  _buildAttachments(context, attachments, attachmentUrls),
+                ],
+              ],
+            ),
+          ),
         ),
       ),
     );
