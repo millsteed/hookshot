@@ -80,7 +80,7 @@ COPY ui/lib lib
 WORKDIR /hookshot/app
 COPY app/lib lib
 COPY app/web web
-RUN flutter build web \
+RUN flutter build web --web-renderer canvaskit \
     --dart-define HOOKSHOT_API_URL=$HOOKSHOT_API_URL \
     --dart-define HOOKSHOT_STORAGE_URL=$HOOKSHOT_STORAGE_URL \
     --dart-define WIREDASH_API_URL=$WIREDASH_API_URL \
