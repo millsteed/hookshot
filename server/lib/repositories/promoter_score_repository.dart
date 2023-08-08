@@ -22,6 +22,10 @@ class PromoterScoreRepository {
       'FROM promoter_scores '
       'WHERE $filter '
       'ORDER BY created_at DESC',
+      substitutionValues: {
+        'created_after': createdAfter,
+        'device_id': deviceId,
+      },
     );
     return results.map((e) => e['promoter_scores']!).map(
       (e) {
