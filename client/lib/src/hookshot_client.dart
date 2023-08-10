@@ -1,4 +1,6 @@
-import 'package:hookshot_protocol/hookshot_protocol.dart';
+import 'package:hookshot_client/src/account_client.dart';
+import 'package:hookshot_client/src/feedback_client.dart';
+import 'package:hookshot_client/src/promoter_score_client.dart';
 import 'package:http/http.dart';
 
 class HookshotClient {
@@ -7,25 +9,44 @@ class HookshotClient {
   final String hookshotApiUrl;
   final String hookshotStorageUrl;
 
-  Future<List<Feedback>> getAllFeedback() async {
-    final response = await get(Uri.parse('$hookshotApiUrl/feedback'));
-    if (response.statusCode != 200) {
-      throw HookshotClientException('Invalid response from server.');
+  final _client = HookshotHttpClient();
+
+  late final AccountClient account = AccountClient(
+    '$hookshotApiUrl/account',
+    _client,
+  );
+
+  late final FeedbackClient feedback = FeedbackClient(
+    '$hookshotApiUrl/feedback',
+    hookshotStorageUrl,
+    _client,
+  );
+
+  late final PromoterScoreClient promoterScore = PromoterScoreClient(
+    '$hookshotApiUrl/promoterscores',
+    _client,
+  );
+
+  String? get token => _client.token;
+
+  set token(String? token) => _client.token = token;
+}
+
+class HookshotHttpClient extends BaseClient {
+  String? token;
+
+  final _client = Client();
+
+  @override
+  Future<StreamedResponse> send(BaseRequest request) {
+    if (token != null) {
+      request.headers['Authorization'] = 'Bearer $token';
     }
-    return response.body.toJsonList().map(Feedback.fromJson).toList();
+    return _client.send(request);
   }
 
-  Future<List<PromoterScore>> getAllPromoterScores() async {
-    final response = await get(Uri.parse('$hookshotApiUrl/promoterscores'));
-    if (response.statusCode != 200) {
-      throw HookshotClientException('Invalid response from server.');
-    }
-    return response.body.toJsonList().map(PromoterScore.fromJson).toList();
-  }
-
-  String getAttachmentUrl(Attachment attachment) {
-    return '$hookshotStorageUrl/${attachment.id}/${attachment.name}';
-  }
+  @override
+  void close() => _client.close();
 }
 
 class HookshotClientException implements Exception {

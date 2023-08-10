@@ -13,6 +13,7 @@ class FeedbackRepository {
   final String storagePath;
 
   Future<List<Feedback>> getFeedback() async {
+    print('FeedbackRepository.getFeedback()');
     final results = await database.mappedResultsQuery(
       'SELECT feedback.id, data, attachments.id, name '
       'FROM feedback '
@@ -47,6 +48,7 @@ class FeedbackRepository {
   }
 
   Future<String> createAttachment(String type, MultipartFile file) async {
+    print('FeedbackRepository.createAttachment()');
     final id = uuid.v4();
     final filename = file.filename ?? uuid.v4();
     final extension = file.contentType.split('/').last;
@@ -79,6 +81,7 @@ class FeedbackRepository {
   }
 
   Future<String> createFeedback(SdkFeedback feedback) async {
+    print('FeedbackRepository.createFeedback()');
     final id = uuid.v4();
     await database.transaction((database) async {
       await _executeCreateFeedback(database, id, feedback);

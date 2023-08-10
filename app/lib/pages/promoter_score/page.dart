@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hookshot_app/pages/promoter_score/bloc.dart';
 import 'package:hookshot_app/pages/promoter_score/event.dart';
 import 'package:hookshot_app/pages/promoter_score/state.dart';
+import 'package:hookshot_app/repositories/promoter_score_repository.dart';
 import 'package:hookshot_client/hookshot_client.dart';
 import 'package:hookshot_ui/hookshot_ui.dart';
 
@@ -12,10 +13,9 @@ class PromoterScorePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hookshotClient = context.read<HookshotClient>();
     return BlocProvider(
       create: (context) => PromoterScoreBloc(
-        hookshotClient,
+        context.read<PromoterScoreRepository>(),
       )..add(PromoterScoreStarted()),
       child: const PromoterScoreView(),
     );

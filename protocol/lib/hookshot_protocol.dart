@@ -1,4 +1,9 @@
+export 'src/messages/get_feedback.dart';
+export 'src/messages/get_promoter_scores.dart';
+export 'src/messages/sign_in.dart';
+export 'src/messages/sign_up.dart';
 export 'src/models/attachment.dart';
 export 'src/models/feedback.dart';
 export 'src/models/promoter_score.dart';
+export 'src/models/user.dart';
 export 'src/utils/json.dart';

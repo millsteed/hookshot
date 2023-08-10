@@ -1,20 +1,22 @@
 import 'dart:convert';
 
+import 'package:hookshot_protocol/hookshot_protocol.dart';
 import 'package:hookshot_server/repositories/promoter_score_repository.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 
-class PromoterScoresController {
-  PromoterScoresController(this.promoterScoreRepository);
+class PromoterScoreController {
+  PromoterScoreController(this.promoterScoreRepository);
 
   final PromoterScoreRepository promoterScoreRepository;
 
   Router get router => Router()
-    ..get('/', _handleGetAllPromoterScores)
+    ..get('/', _handleGetPromoterScores)
     ..mount('/', (request) => Response.notFound(null));
 
-  Future<Response> _handleGetAllPromoterScores(Request request) async {
+  Future<Response> _handleGetPromoterScores(Request request) async {
     final promoterScores = await promoterScoreRepository.getPromoterScores();
-    return Response.ok(jsonEncode(promoterScores));
+    final response = GetPromoterScoresResponse(promoterScores: promoterScores);
+    return Response.ok(jsonEncode(response));
   }
 }

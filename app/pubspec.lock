@@ -41,14 +41,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.17.1"
-  crypto:
-    dependency: transitive
-    description:
-      name: crypto
-      sha256: ff625774173754681d66daaf4a448684fb04b78f902da9cb3d308c19cc5e8bab
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.0.3"
   ffi:
     dependency: transitive
     description:
@@ -110,21 +102,21 @@ packages:
       path: "../client"
       relative: true
     source: path
-    version: "0.0.0+1"
+    version: "0.1.0+2"
   hookshot_protocol:
     dependency: transitive
     description:
       path: "../protocol"
       relative: true
     source: path
-    version: "0.0.0+1"
+    version: "0.1.0+2"
   hookshot_ui:
     dependency: "direct main"
     description:
       path: "../ui"
       relative: true
     source: path
-    version: "0.0.0+1"
+    version: "0.1.0+2"
   http:
     dependency: transitive
     description:
@@ -278,7 +270,7 @@ packages:
     source: hosted
     version: "6.0.5"
   shared_preferences:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: shared_preferences
       sha256: "0344316c947ffeb3a529eac929e1978fcd37c26be4e8468628bac399365a3ca1"
@@ -431,14 +423,6 @@ packages:
     description:
       name: url_launcher_windows
       sha256: "7967065dd2b5fccc18c653b97958fdf839c5478c28e767c61ee879f4e7882422"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.0.7"
-  uuid:
-    dependency: transitive
-    description:
-      name: uuid
-      sha256: "648e103079f7c64a36dc7d39369cabb358d377078a051d6ae2ad3aa539519313"
       url: "https://pub.dev"
     source: hosted
     version: "3.0.7"

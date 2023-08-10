@@ -12,10 +12,11 @@ class PromoterScoreRepository {
     DateTime? createdAfter,
     String? deviceId,
   }) async {
+    print('PromoterScoreRepository.getPromoterScores()');
     final filter = [
-      'deleted_at IS NULL',
       if (createdAfter != null) 'created_at > @created_after',
       if (deviceId != null) "data ->> 'deviceId' = @device_id",
+      'deleted_at IS NULL',
     ].join(' AND ');
     final results = await database.mappedResultsQuery(
       'SELECT id, data '
@@ -44,6 +45,7 @@ class PromoterScoreRepository {
   }
 
   Future<String> createPromoterScore(SdkPromoterScore promoterScore) async {
+    print('PromoterScoreRepository.createPromoterScore()');
     final id = uuid.v4();
     await _executeCreatePromoterScore(database, id, promoterScore);
     return id;
@@ -71,6 +73,7 @@ class PromoterScoreRepository {
     String id,
     SdkPromoterScore promoterScore,
   ) async {
+    print('PromoterScoreRepository.updatePromoterScoreData()');
     await _executeUpdatePromoterScoreData(database, id, promoterScore);
   }
 

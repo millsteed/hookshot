@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hookshot_app/pages/feedback/bloc.dart';
 import 'package:hookshot_app/pages/feedback/event.dart';
 import 'package:hookshot_app/pages/feedback/state.dart';
+import 'package:hookshot_app/repositories/feedback_repository.dart';
 import 'package:hookshot_client/hookshot_client.dart';
 import 'package:hookshot_ui/hookshot_ui.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -13,9 +14,10 @@ class FeedbackPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hookshotClient = context.read<HookshotClient>();
     return BlocProvider(
-      create: (context) => FeedbackBloc(hookshotClient)..add(FeedbackStarted()),
+      create: (context) => FeedbackBloc(
+        context.read<FeedbackRepository>(),
+      )..add(FeedbackStarted()),
       child: const FeedbackView(),
     );
   }

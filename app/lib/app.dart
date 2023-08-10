@@ -1,20 +1,26 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hookshot_app/repositories/account_repository.dart';
+import 'package:hookshot_app/repositories/feedback_repository.dart';
+import 'package:hookshot_app/repositories/promoter_score_repository.dart';
 import 'package:hookshot_app/router.dart';
-import 'package:hookshot_client/hookshot_client.dart';
 import 'package:hookshot_ui/hookshot_ui.dart';
 import 'package:wiredash/wiredash.dart';
 
 class App extends StatelessWidget {
   const App({
     super.key,
-    required this.hookshotClient,
+    required this.accountRepository,
+    required this.feedbackRepository,
+    required this.promoterScoreRepository,
     required this.wiredashApiUrl,
     required this.wiredashProject,
     required this.wiredashSecret,
   });
 
-  final HookshotClient hookshotClient;
+  final AccountRepository accountRepository;
+  final FeedbackRepository feedbackRepository;
+  final PromoterScoreRepository promoterScoreRepository;
 
   final String wiredashApiUrl;
   final String wiredashProject;
@@ -22,8 +28,12 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider.value(
-      value: hookshotClient,
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider.value(value: accountRepository),
+        RepositoryProvider.value(value: feedbackRepository),
+        RepositoryProvider.value(value: promoterScoreRepository),
+      ],
       child: Wiredash(
         host: wiredashApiUrl,
         projectId: wiredashProject,
