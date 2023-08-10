@@ -8,7 +8,7 @@ class PromoterScoreClient {
   final Client client;
 
   Future<GetPromoterScoresResponse> getPromoterScores() async {
-    final response = await client.get(Uri.parse('$apiUrl/promoterscores'));
+    final response = await client.get(Uri.parse('$apiUrl/'));
     if (response.statusCode != 200) {
       throw HookshotClientException(response.body);
     }
