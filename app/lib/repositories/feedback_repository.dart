@@ -5,9 +5,9 @@ class FeedbackRepository {
 
   final HookshotClient hookshotClient;
 
-  Future<GetFeedbackResponse> getFeedback() =>
-      hookshotClient.feedback.getFeedback();
+  Future<GetFeedbackResponse> getFeedback({required String projectId}) =>
+      hookshotClient.getFeedback(projectId: projectId);
 
   String getAttachmentUrl(Attachment attachment) =>
-      hookshotClient.feedback.getAttachmentUrl(attachment);
+      hookshotClient.getAttachmentUrl(attachment);
 }

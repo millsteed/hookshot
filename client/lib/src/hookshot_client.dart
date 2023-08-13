@@ -1,35 +1,98 @@
-import 'package:hookshot_client/src/account_client.dart';
-import 'package:hookshot_client/src/feedback_client.dart';
-import 'package:hookshot_client/src/promoter_score_client.dart';
+import 'dart:convert';
+
+import 'package:hookshot_client/hookshot_client.dart';
 import 'package:http/http.dart';
 
 class HookshotClient {
-  HookshotClient(this.hookshotApiUrl, this.hookshotStorageUrl);
+  HookshotClient(this.apiUrl, this.storageUrl);
 
-  final String hookshotApiUrl;
-  final String hookshotStorageUrl;
+  final String apiUrl;
+  final String storageUrl;
 
   final _client = HookshotHttpClient();
-
-  late final AccountClient account = AccountClient(
-    '$hookshotApiUrl/account',
-    _client,
-  );
-
-  late final FeedbackClient feedback = FeedbackClient(
-    '$hookshotApiUrl/feedback',
-    hookshotStorageUrl,
-    _client,
-  );
-
-  late final PromoterScoreClient promoterScore = PromoterScoreClient(
-    '$hookshotApiUrl/promoterscores',
-    _client,
-  );
 
   String? get token => _client.token;
 
   set token(String? token) => _client.token = token;
+
+  Future<SignUpResponse> signUp({
+    required String name,
+    required String email,
+    required String password,
+  }) async {
+    final request = SignUpRequest(name: name, email: email, password: password);
+    final response = await _client.post(
+      Uri.parse('$apiUrl/account/signup'),
+      body: jsonEncode(request),
+    );
+    if (response.statusCode != 200) {
+      throw HookshotClientException(response.body);
+    }
+    return SignUpResponse.fromJson(response.body.toJson());
+  }
+
+  Future<SignInResponse> signIn({
+    required String email,
+    required String password,
+  }) async {
+    final request = SignInRequest(email: email, password: password);
+    final response = await _client.post(
+      Uri.parse('$apiUrl/account/signin'),
+      body: jsonEncode(request),
+    );
+    if (response.statusCode != 200) {
+      throw HookshotClientException(response.body);
+    }
+    return SignInResponse.fromJson(response.body.toJson());
+  }
+
+  Future<GetProjectsResponse> getProjects() async {
+    final response = await _client.get(
+      Uri.parse('$apiUrl/projects'),
+    );
+    if (response.statusCode != 200) {
+      throw HookshotClientException(response.body);
+    }
+    return GetProjectsResponse.fromJson(response.body.toJson());
+  }
+
+  Future<CreateProjectResponse> createProject({required String name}) async {
+    final request = CreateProjectRequest(name: name);
+    final response = await _client.post(
+      Uri.parse('$apiUrl/projects'),
+      body: jsonEncode(request),
+    );
+    if (response.statusCode != 200) {
+      throw HookshotClientException(response.body);
+    }
+    return CreateProjectResponse.fromJson(response.body.toJson());
+  }
+
+  Future<GetFeedbackResponse> getFeedback({required String projectId}) async {
+    final response = await _client.get(
+      Uri.parse('$apiUrl/projects/$projectId/feedback'),
+    );
+    if (response.statusCode != 200) {
+      throw HookshotClientException(response.body);
+    }
+    return GetFeedbackResponse.fromJson(response.body.toJson());
+  }
+
+  Future<GetPromoterScoresResponse> getPromoterScores({
+    required String projectId,
+  }) async {
+    final response = await _client.get(
+      Uri.parse('$apiUrl/projects/$projectId/promoterscores'),
+    );
+    if (response.statusCode != 200) {
+      throw HookshotClientException(response.body);
+    }
+    return GetPromoterScoresResponse.fromJson(response.body.toJson());
+  }
+
+  String getAttachmentUrl(Attachment attachment) {
+    return '$storageUrl/${attachment.id}/${attachment.name}';
+  }
 }
 
 class HookshotHttpClient extends BaseClient {

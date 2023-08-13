@@ -1,11 +1,10 @@
 import 'dart:io';
 
-import 'package:hookshot_server/controllers/account_controller.dart';
-import 'package:hookshot_server/controllers/feedback_controller.dart';
-import 'package:hookshot_server/controllers/promoter_score_controller.dart';
-import 'package:hookshot_server/controllers/sdk_controller.dart';
+import 'package:hookshot_server/api.dart';
 import 'package:hookshot_server/repositories/feedback_repository.dart';
+import 'package:hookshot_server/repositories/project_repository.dart';
 import 'package:hookshot_server/repositories/promoter_score_repository.dart';
+import 'package:hookshot_server/repositories/sdk_logs_repository.dart';
 import 'package:hookshot_server/repositories/user_repository.dart';
 import 'package:postgres/postgres.dart';
 import 'package:shelf/shelf.dart';
@@ -70,25 +69,15 @@ Future<HttpServer> _buildServer(PostgreSQLConnection database) async {
   final pipeline = const Pipeline()
       .addMiddleware(logRequests())
       .addMiddleware(corsHeaders(headers: {ACCESS_CONTROL_ALLOW_HEADERS: '*'}));
-  final userRepository = UserRepository(database);
-  final feedbackRepository = FeedbackRepository(database, _storagePath);
-  final promoterScoreRepository = PromoterScoreRepository(database);
-  final sdkController = SdkController(
-    feedbackRepository,
-    promoterScoreRepository,
+  final api = Api(
+    UserRepository(database),
+    ProjectRepository(database),
+    SdkLogsRepository(database),
+    FeedbackRepository(database, _storagePath),
+    PromoterScoreRepository(database),
   );
-  final accountController = AccountController(userRepository);
-  final feedbackController = FeedbackController(feedbackRepository);
-  final promoterScoreController = PromoterScoreController(
-    promoterScoreRepository,
-  );
-  final apiRouter = Router()
-    ..mount('/sdk', sdkController.router.call)
-    ..mount('/account', accountController.router.call)
-    ..mount('/feedback', feedbackController.router.call)
-    ..mount('/promoterscores', promoterScoreController.router.call);
   final router = Router()
-    ..mount('/api', apiRouter.call)
+    ..mount('/api', api.router.call)
     ..mount('/storage', createStaticHandler(_storagePath))
     ..get(r'/<file|.*\..*>', createStaticHandler(_webPath))
     ..mount('/', _handleIndexRewrite);

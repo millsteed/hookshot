@@ -1,6 +1,5 @@
 services:
   postgres:
-    ports: !reset []
     environment:
       POSTGRES_PASSWORD: ${DATABASE_PASS:?}
   server:

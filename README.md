@@ -2,6 +2,13 @@
 
 Hookshot is a feedback and survey SDK for Flutter apps, an accompanying backend to collect responses and a dashboard for your team to view them.
 
+| Screenshots                    | 2023-08-14                     |
+| :----------------------------: | :----------------------------: |
+| Sign up                        | Projects                       |
+| ![](.github/screenshots/1.png) | ![](.github/screenshots/2.png) |
+| Feedback                       | Promoter score                 |
+| ![](.github/screenshots/3.png) | ![](.github/screenshots/4.png) |
+
 Since Wiredash is a popular, albeit expensive, feedback and survey service for the Flutter ecosystem, Hookshot is designed for compatability with the Wiredash SDK. Simply change your `pubspec.yaml` import to use our fork at https://github.com/millsteed/wiredash-sdk, which lets you supply a custom `host` to the `Wiredash` widget to point the SDK at Hookshot instead of Wiredash. Here's an example:
 
 ```yaml

@@ -18,6 +18,10 @@ class Colors {
   static const transparent = Color(0x00000000);
 }
 
+class Sizes {
+  static const maxWidth = 1024.0;
+}
+
 class Spacing {
   static const extraSmall = 8.0;
   static const small = 12.0;

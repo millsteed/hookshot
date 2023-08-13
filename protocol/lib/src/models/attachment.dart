@@ -8,6 +8,7 @@ part 'attachment.g.dart';
 class Attachment with _$Attachment {
   const factory Attachment({
     required String id,
+    required String feedbackId,
     required String name,
   }) = _Attachment;
 

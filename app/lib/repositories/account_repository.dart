@@ -18,7 +18,7 @@ class AccountRepository {
     required String email,
     required String password,
   }) async {
-    final response = await hookshotClient.account.signUp(
+    final response = await hookshotClient.signUp(
       name: name,
       email: email,
       password: password,
@@ -32,7 +32,7 @@ class AccountRepository {
     required String email,
     required String password,
   }) async {
-    final response = await hookshotClient.account.signIn(
+    final response = await hookshotClient.signIn(
       email: email,
       password: password,
     );

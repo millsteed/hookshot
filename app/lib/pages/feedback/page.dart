@@ -10,13 +10,16 @@ import 'package:hookshot_ui/hookshot_ui.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class FeedbackPage extends StatelessWidget {
-  const FeedbackPage({super.key});
+  const FeedbackPage({super.key, required this.projectId});
+
+  final String projectId;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => FeedbackBloc(
         context.read<FeedbackRepository>(),
+        projectId,
       )..add(FeedbackStarted()),
       child: const FeedbackView(),
     );
@@ -72,11 +75,11 @@ class FeedbackView extends StatelessWidget {
     final message = feedback.message;
     final attachments = feedback.attachments;
     return Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 1024),
-        child: IntrinsicHeight(
-          child: Padding(
-            padding: const EdgeInsets.all(Spacing.medium),
+      child: Padding(
+        padding: const EdgeInsets.all(Spacing.medium),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: Sizes.maxWidth),
+          child: IntrinsicHeight(
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

@@ -8,7 +8,7 @@ part 'get_promoter_scores.g.dart';
 class GetPromoterScoresResponse with _$GetPromoterScoresResponse {
   const factory GetPromoterScoresResponse({
     required List<PromoterScore> promoterScores,
-  }) = _GetAllPromoterScoresResponse;
+  }) = _GetPromoterScoresResponse;
 
   factory GetPromoterScoresResponse.fromJson(Json json) =>
       _$GetPromoterScoresResponseFromJson(json);

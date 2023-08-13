@@ -8,7 +8,7 @@ part 'get_feedback.g.dart';
 class GetFeedbackResponse with _$GetFeedbackResponse {
   const factory GetFeedbackResponse({
     required List<Feedback> feedback,
-  }) = _GetAllFeedbackResponse;
+  }) = _GetFeedbackResponse;
 
   factory GetFeedbackResponse.fromJson(Json json) =>
       _$GetFeedbackResponseFromJson(json);

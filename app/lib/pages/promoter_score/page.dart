@@ -9,13 +9,16 @@ import 'package:hookshot_client/hookshot_client.dart';
 import 'package:hookshot_ui/hookshot_ui.dart';
 
 class PromoterScorePage extends StatelessWidget {
-  const PromoterScorePage({super.key});
+  const PromoterScorePage({super.key, required this.projectId});
+
+  final String projectId;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => PromoterScoreBloc(
         context.read<PromoterScoreRepository>(),
+        projectId,
       )..add(PromoterScoreStarted()),
       child: const PromoterScoreView(),
     );
@@ -92,7 +95,7 @@ class PromoterScoreView extends StatelessWidget {
     List<int> rollingScores,
   ) {
     return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 1024),
+      constraints: const BoxConstraints(maxWidth: Sizes.maxWidth),
       child: Padding(
         padding: const EdgeInsets.all(Spacing.medium),
         child: Container(
@@ -219,7 +222,7 @@ class PromoterScoreView extends StatelessWidget {
     final score = promoterScore.score;
     return Center(
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 1024),
+        constraints: const BoxConstraints(maxWidth: Sizes.maxWidth),
         child: Padding(
           padding: const EdgeInsets.all(Spacing.medium),
           child: Column(

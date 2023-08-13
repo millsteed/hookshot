@@ -6,43 +6,38 @@ import 'package:hookshot_server/models/sdk_feedback.dart';
 import 'package:hookshot_server/models/sdk_headers.dart';
 import 'package:hookshot_server/models/sdk_promoter_score.dart';
 import 'package:hookshot_server/repositories/feedback_repository.dart';
+import 'package:hookshot_server/repositories/project_repository.dart';
 import 'package:hookshot_server/repositories/promoter_score_repository.dart';
+import 'package:hookshot_server/repositories/sdk_logs_repository.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_multipart/form_data.dart';
-import 'package:shelf_router/shelf_router.dart';
 
 class SdkController {
-  SdkController(this.feedbackRepository, this.promoterScoreRepository);
+  SdkController(
+    this.projectRepository,
+    this.sdkLogsRepository,
+    this.feedbackRepository,
+    this.promoterScoreRepository,
+  );
 
+  final ProjectRepository projectRepository;
+  final SdkLogsRepository sdkLogsRepository;
   final FeedbackRepository feedbackRepository;
   final PromoterScoreRepository promoterScoreRepository;
 
-  Router get router => Router()
-    ..post('/ping', _handlePing)
-    ..post('/uploadAttachment', _handleUploadAttachment)
-    ..post('/sendFeedback', _handleSendFeedback)
-    ..post('/sendPromoterScore', _handleSendPromoterScore)
-    ..mount('/', (request) => Response.notFound(null));
-
-  Future<Response> _handlePing(Request request) async {
-    final SdkHeaders headers;
-    try {
-      headers = SdkHeaders.fromJson(request.headers);
-    } on Exception {
-      return Response.badRequest();
+  Future<Response> handlePing(Request request) async {
+    final headers = await _parseAndVerifyHeaders(request, 'ping');
+    if (headers == null) {
+      return Response.unauthorized(null);
     }
-    print(headers);
     return Response.ok(null);
   }
 
-  Future<Response> _handleUploadAttachment(Request request) async {
-    final SdkHeaders headers;
-    try {
-      headers = SdkHeaders.fromJson(request.headers);
-    } on Exception {
-      return Response.badRequest();
+  Future<Response> handleUploadAttachment(Request request) async {
+    final headers = await _parseAndVerifyHeaders(request, 'uploadAttachment');
+    if (headers == null) {
+      return Response.unauthorized(null);
     }
-    print(headers);
     if (!request.isMultipartForm) {
       return Response.badRequest();
     }
@@ -56,14 +51,11 @@ class SdkController {
     return Response.ok(jsonEncode({'id': id}));
   }
 
-  Future<Response> _handleSendFeedback(Request request) async {
-    final SdkHeaders headers;
-    try {
-      headers = SdkHeaders.fromJson(request.headers);
-    } on Exception {
-      return Response.badRequest();
+  Future<Response> handleSendFeedback(Request request) async {
+    final headers = await _parseAndVerifyHeaders(request, 'sendFeedback');
+    if (headers == null) {
+      return Response.unauthorized(null);
     }
-    print(headers);
     final body = await request.readAsString();
     final SdkFeedback feedback;
     try {
@@ -71,19 +63,15 @@ class SdkController {
     } on Exception {
       return Response.badRequest();
     }
-    print(feedback);
-    await feedbackRepository.createFeedback(feedback);
+    await feedbackRepository.createFeedback(headers.project, feedback);
     return Response.ok(null);
   }
 
-  Future<Response> _handleSendPromoterScore(Request request) async {
-    final SdkHeaders headers;
-    try {
-      headers = SdkHeaders.fromJson(request.headers);
-    } on Exception {
-      return Response.badRequest();
+  Future<Response> handleSendPromoterScore(Request request) async {
+    final headers = await _parseAndVerifyHeaders(request, 'sendPromoterScore');
+    if (headers == null) {
+      return Response.unauthorized(null);
     }
-    print(headers);
     final body = await request.readAsString();
     final SdkPromoterScore promoterScore;
     try {
@@ -91,14 +79,16 @@ class SdkController {
     } on Exception {
       return Response.badRequest();
     }
-    print(promoterScore);
     final lastWeek = DateTime.now().subtract(const Duration(days: 7));
     final promoterScores = await promoterScoreRepository.getPromoterScores(
       createdAfter: lastWeek,
       deviceId: promoterScore.deviceId,
     );
     if (promoterScores.isEmpty) {
-      await promoterScoreRepository.createPromoterScore(promoterScore);
+      await promoterScoreRepository.createPromoterScore(
+        headers.project,
+        promoterScore,
+      );
     } else {
       await promoterScoreRepository.updatePromoterScoreData(
         promoterScores.first.id,
@@ -106,5 +96,23 @@ class SdkController {
       );
     }
     return Response.ok(null);
+  }
+
+  Future<SdkHeaders?> _parseAndVerifyHeaders(
+    Request request,
+    String type,
+  ) async {
+    final SdkHeaders headers;
+    try {
+      headers = SdkHeaders.fromJson(request.headers);
+    } on Exception {
+      return null;
+    }
+    final project = await projectRepository.getProject(id: headers.project);
+    if (project == null || headers.secret != project.secret) {
+      return null;
+    }
+    await sdkLogsRepository.createSdkLog(headers.project, headers.device, type);
+    return headers;
   }
 }

@@ -8,6 +8,7 @@ part 'promoter_score.g.dart';
 class PromoterScore with _$PromoterScore {
   const factory PromoterScore({
     required String id,
+    required String projectId,
     String? email,
     required String question,
     String? message,

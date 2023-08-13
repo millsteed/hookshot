@@ -1,9 +1,12 @@
 import 'dart:async';
 
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hookshot_app/pages/app_shell/page.dart';
+import 'package:hookshot_app/pages/create_project/page.dart';
 import 'package:hookshot_app/pages/feedback/page.dart';
+import 'package:hookshot_app/pages/projects/page.dart';
 import 'package:hookshot_app/pages/promoter_score/page.dart';
 import 'package:hookshot_app/pages/sign_in/page.dart';
 import 'package:hookshot_app/pages/sign_up/page.dart';
@@ -14,40 +17,81 @@ enum Routes {
   home,
   signUp,
   signIn,
+  projects,
+  createProject,
+  project,
   feedback,
   promoterScore,
 }
 
 final router = GoRouter(
   routes: [
-    GoRoute(
-      name: Routes.signUp.name,
-      path: '/signup',
-      builder: (context, state) => const SignUpPage(),
-    ),
-    GoRoute(
-      name: Routes.signIn.name,
-      path: '/signin',
-      builder: (context, state) => const SignInPage(),
-    ),
     ShellRoute(
-      builder: (context, state, child) => AppShellPage(child: child),
+      builder: (context, state, child) => Banner(
+        message: 'ALPHA',
+        location: BannerLocation.topEnd,
+        child: child,
+      ),
       routes: [
         GoRoute(
           name: Routes.home.name,
           path: '/',
           redirect: (context, state) =>
-              state.namedLocation(Routes.feedback.name),
+              state.namedLocation(Routes.projects.name),
         ),
         GoRoute(
-          name: Routes.feedback.name,
-          path: '/feedback',
-          builder: (context, state) => const FeedbackPage(),
+          name: Routes.signUp.name,
+          path: '/account/signup',
+          builder: (context, state) => const SignUpPage(),
         ),
         GoRoute(
-          name: Routes.promoterScore.name,
-          path: '/promoterscore',
-          builder: (context, state) => const PromoterScorePage(),
+          name: Routes.signIn.name,
+          path: '/account/signin',
+          builder: (context, state) => const SignInPage(),
+        ),
+        ShellRoute(
+          builder: (context, state, child) => AppShellPage(
+            projectId: state.pathParameters['projectId'],
+            child: child,
+          ),
+          routes: [
+            GoRoute(
+              name: Routes.projects.name,
+              path: '/projects',
+              builder: (context, state) => const ProjectsPage(),
+              routes: [
+                GoRoute(
+                  name: Routes.createProject.name,
+                  path: 'create',
+                  builder: (context, state) => const CreateProjectPage(),
+                ),
+              ],
+            ),
+            GoRoute(
+              name: Routes.project.name,
+              path: '/projects/:projectId',
+              redirect: (context, state) => state.namedLocation(
+                Routes.feedback.name,
+                pathParameters: {
+                  'projectId': state.pathParameters['projectId']!,
+                },
+              ),
+            ),
+            GoRoute(
+              name: Routes.feedback.name,
+              path: '/projects/:projectId/feedback',
+              builder: (context, state) => FeedbackPage(
+                projectId: state.pathParameters['projectId']!,
+              ),
+            ),
+            GoRoute(
+              name: Routes.promoterScore.name,
+              path: '/projects/:projectId/promoterscore',
+              builder: (context, state) => PromoterScorePage(
+                projectId: state.pathParameters['projectId']!,
+              ),
+            ),
+          ],
         ),
       ],
     ),

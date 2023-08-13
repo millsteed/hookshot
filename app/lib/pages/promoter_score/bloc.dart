@@ -5,7 +5,7 @@ import 'package:hookshot_app/repositories/promoter_score_repository.dart';
 import 'package:hookshot_client/hookshot_client.dart';
 
 class PromoterScoreBloc extends Bloc<PromoterScoreEvent, PromoterScoreState> {
-  PromoterScoreBloc(this.promoterScoreRepository)
+  PromoterScoreBloc(this.promoterScoreRepository, this.projectId)
       : super(PromoterScoreInitial()) {
     on<PromoterScoreEvent>(
       (event, emit) => switch (event) {
@@ -19,6 +19,7 @@ class PromoterScoreBloc extends Bloc<PromoterScoreEvent, PromoterScoreState> {
   static const _detractors = [0, 1, 2, 3, 4, 5, 6];
 
   final PromoterScoreRepository promoterScoreRepository;
+  final String projectId;
 
   Future<void> _handleStarted(
     PromoterScoreStarted event,
@@ -26,7 +27,9 @@ class PromoterScoreBloc extends Bloc<PromoterScoreEvent, PromoterScoreState> {
   ) async {
     emit(PromoterScoreLoading());
     try {
-      final response = await promoterScoreRepository.getPromoterScores();
+      final response = await promoterScoreRepository.getPromoterScores(
+        projectId: projectId,
+      );
       final promoterScores = response.promoterScores;
       if (promoterScores.isNotEmpty) {
         final total = promoterScores

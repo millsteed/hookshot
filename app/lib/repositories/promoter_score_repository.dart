@@ -5,6 +5,8 @@ class PromoterScoreRepository {
 
   final HookshotClient hookshotClient;
 
-  Future<GetPromoterScoresResponse> getPromoterScores() =>
-      hookshotClient.promoterScore.getPromoterScores();
+  Future<GetPromoterScoresResponse> getPromoterScores({
+    required String projectId,
+  }) =>
+      hookshotClient.getPromoterScores(projectId: projectId);
 }

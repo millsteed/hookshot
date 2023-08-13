@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hookshot_app/repositories/account_repository.dart';
 import 'package:hookshot_app/repositories/feedback_repository.dart';
+import 'package:hookshot_app/repositories/project_repository.dart';
 import 'package:hookshot_app/repositories/promoter_score_repository.dart';
 import 'package:hookshot_app/router.dart';
 import 'package:hookshot_ui/hookshot_ui.dart';
@@ -11,6 +12,7 @@ class App extends StatelessWidget {
   const App({
     super.key,
     required this.accountRepository,
+    required this.projectRepository,
     required this.feedbackRepository,
     required this.promoterScoreRepository,
     required this.wiredashApiUrl,
@@ -19,6 +21,7 @@ class App extends StatelessWidget {
   });
 
   final AccountRepository accountRepository;
+  final ProjectRepository projectRepository;
   final FeedbackRepository feedbackRepository;
   final PromoterScoreRepository promoterScoreRepository;
 
@@ -31,6 +34,7 @@ class App extends StatelessWidget {
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider.value(value: accountRepository),
+        RepositoryProvider.value(value: projectRepository),
         RepositoryProvider.value(value: feedbackRepository),
         RepositoryProvider.value(value: promoterScoreRepository),
       ],

@@ -13,6 +13,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
       },
     );
   }
+
   final AccountRepository accountRepository;
 
   Future<void> _handleStarted(

@@ -1,6 +1,6 @@
 name: hookshot_app
 publish_to: none
-version: 0.1.0+2
+version: 0.2.0+3
 
 environment:
   sdk: ^3.0.6

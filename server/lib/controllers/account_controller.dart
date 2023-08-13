@@ -3,19 +3,13 @@ import 'dart:convert';
 import 'package:hookshot_protocol/hookshot_protocol.dart';
 import 'package:hookshot_server/repositories/user_repository.dart';
 import 'package:shelf/shelf.dart';
-import 'package:shelf_router/shelf_router.dart';
 
 class AccountController {
   AccountController(this.userRepository);
 
   final UserRepository userRepository;
 
-  Router get router => Router()
-    ..post('/signup', _handleSignUp)
-    ..post('/signin', _handleSignIn)
-    ..mount('/', (request) => Response.notFound(null));
-
-  Future<Response> _handleSignUp(Request request) async {
+  Future<Response> handleSignUp(Request request) async {
     final body = await request.readAsString();
     final SignUpRequest data;
     try {
@@ -50,7 +44,7 @@ class AccountController {
     return Response.ok(jsonEncode(response));
   }
 
-  Future<Response> _handleSignIn(Request request) async {
+  Future<Response> handleSignIn(Request request) async {
     final body = await request.readAsString();
     final SignInRequest data;
     try {

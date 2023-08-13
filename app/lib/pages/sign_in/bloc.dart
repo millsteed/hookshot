@@ -13,6 +13,7 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
       },
     );
   }
+
   final AccountRepository accountRepository;
 
   Future<void> _handleStarted(

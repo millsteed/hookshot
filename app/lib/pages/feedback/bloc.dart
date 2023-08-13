@@ -5,7 +5,8 @@ import 'package:hookshot_app/repositories/feedback_repository.dart';
 import 'package:hookshot_client/hookshot_client.dart';
 
 class FeedbackBloc extends Bloc<FeedbackEvent, FeedbackState> {
-  FeedbackBloc(this.feedbackRepository) : super(FeedbackInitial()) {
+  FeedbackBloc(this.feedbackRepository, this.projectId)
+      : super(FeedbackInitial()) {
     on<FeedbackEvent>(
       (event, emit) => switch (event) {
         FeedbackStarted() => _handleStarted(event, emit),
@@ -14,6 +15,7 @@ class FeedbackBloc extends Bloc<FeedbackEvent, FeedbackState> {
   }
 
   final FeedbackRepository feedbackRepository;
+  final String projectId;
 
   Future<void> _handleStarted(
     FeedbackStarted event,
@@ -21,7 +23,9 @@ class FeedbackBloc extends Bloc<FeedbackEvent, FeedbackState> {
   ) async {
     emit(FeedbackLoading());
     try {
-      final response = await feedbackRepository.getFeedback();
+      final response = await feedbackRepository.getFeedback(
+        projectId: projectId,
+      );
       final feedback = response.feedback;
       final attachmentUrls = Map.fromEntries(
         feedback

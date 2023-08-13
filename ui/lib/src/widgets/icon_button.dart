@@ -15,10 +15,10 @@ class IconButton extends StatelessWidget {
         builder: (context, isHovered) => Container(
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: isHovered ? Colors.gray800 : Colors.black,
+            color: isHovered ? Colors.gray100 : Colors.gray50,
           ),
-          padding: const EdgeInsets.all(Spacing.medium),
-          child: Icon(icon, color: Colors.white),
+          padding: const EdgeInsets.all(Spacing.extraSmall),
+          child: Icon(icon, color: Colors.black),
         ),
       ),
     );

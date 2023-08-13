@@ -8,6 +8,7 @@ part 'feedback.g.dart';
 class Feedback with _$Feedback {
   const factory Feedback({
     required String id,
+    required String projectId,
     String? email,
     required String message,
     List<Attachment>? attachments,

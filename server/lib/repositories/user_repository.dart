@@ -9,7 +9,6 @@ class UserRepository {
   final PostgreSQLConnection database;
 
   Future<User?> getUserWithEmail({required String email}) async {
-    print('UserRepository.getUserWithEmail()');
     final results = await database.mappedResultsQuery(
       'SELECT id, name FROM users WHERE email = @email AND deleted_at IS NULL',
       substitutionValues: {'email': email},
@@ -23,12 +22,24 @@ class UserRepository {
     return User(id: id, email: email, name: name);
   }
 
+  Future<String?> getSessionUserId({required String sessionId}) async {
+    final results = await database.mappedResultsQuery(
+      'SELECT user_id FROM sessions WHERE id = @id AND deleted_at IS NULL',
+      substitutionValues: {'id': sessionId},
+    );
+    if (results.isEmpty) {
+      return null;
+    }
+    final result = results.map((e) => e['sessions']!).single;
+    final userId = result['user_id'] as String;
+    return userId;
+  }
+
   Future<User> createUser({
     required String name,
     required String email,
     required String password,
   }) async {
-    print('UserRepository.createUser()');
     final id = uuid.v4();
     final passwordHash = hashPassword(password);
     await _executeCreateUser(database, id, name, email, passwordHash);
@@ -62,7 +73,6 @@ class UserRepository {
     required String userId,
     required String password,
   }) async {
-    print('UserRepository.checkPassword()');
     final results = await database.mappedResultsQuery(
       'SELECT password_hash FROM users WHERE id = @id AND deleted_at IS NULL',
       substitutionValues: {'id': userId},
@@ -76,7 +86,6 @@ class UserRepository {
   }
 
   Future<String> createSession({required String userId}) async {
-    print('UserRepository.createSession()');
     final id = uuid.v4();
     await _executeCreateSession(database, id, userId);
     return id;
